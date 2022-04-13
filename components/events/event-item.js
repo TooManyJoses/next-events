@@ -1,8 +1,5 @@
-import Link from 'next/link';
-import {
-  formatDisplayDate,
-  formatAddress,
-} from '../../../utils/displayFormating';
+import { formatDisplayDate, formatAddress } from '../../utils/displayFormating';
+import Button from '../ui/button';
 import styles from './event-item.module.css';
 
 function EventItem({ title, image, date, location, id }) {
@@ -23,7 +20,7 @@ function EventItem({ title, image, date, location, id }) {
           </div>
         </div>
         <div className={styles.actions}>
-          <Link href={`/events/${id}`}>Explore Event</Link>
+          <Button link={`/events/${id}`}>Explore Event</Button>
         </div>
       </div>
     </li>
