@@ -1,17 +1,28 @@
-import { EVENTS } from '../mock-data';
+export async function getAllEvents() {
+  const response = await fetch(
+    'https://next-events-f0ba9-default-rtdb.firebaseio.com/events.json'
+  );
+  const data = await response.json();
 
-export function getFeaturedEvents() {
-  return EVENTS.filter((event) => event.isFeatured);
+  const events = [];
+  for (const key in data) {
+    events.push({ id: key, ...data[key] });
+  }
+
+  return events;
 }
 
-export function getAllEvents() {
-  return EVENTS;
+export async function getFeaturedEvents() {
+  const allEvents = await getAllEvents();
+
+  return allEvents.filter((event) => event.isFeatured);
 }
 
-export function getFilteredEvents(dateFilter) {
+export async function getFilteredEvents(dateFilter) {
   const { year, month } = dateFilter;
+  const allEvents = await getAllEvents();
 
-  let filteredEvents = EVENTS.filter((event) => {
+  let filteredEvents = allEvents.filter((event) => {
     const eventDate = new Date(event.date);
     return (
       eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
@@ -21,6 +32,14 @@ export function getFilteredEvents(dateFilter) {
   return filteredEvents;
 }
 
-export function getEventById(id) {
-  return EVENTS.find((event) => event.id === id);
+export async function getEventById(id) {
+  const allEvents = await getAllEvents();
+
+  return allEvents.find((event) => event.id === id);
+}
+
+export async function getAllEventIds() {
+  const events = await getAllEvents();
+
+  return events.map((event) => event.id)
 }
