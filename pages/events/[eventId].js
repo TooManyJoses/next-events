@@ -3,11 +3,16 @@ import {
   EventLogistics,
   EventContent,
 } from '../../components/event-detail';
-import { getEventById, getAllEventIds } from '../../utils/getEvents';
+import ErrorAlert from '../../components/ui/error-alert';
+import { getEventById, getFeaturedEventIds } from '../../utils/getEvents';
 
 function EventDetailPage({ eventDetails }) {
   if (!eventDetails) {
-    return <p>No Event Found</p>;
+    return (
+      <ErrorAlert>
+        <p>No Event Found</p>
+      </ErrorAlert>
+    );
   }
   const { title, date, location, description, image } = eventDetails;
   return (
@@ -36,15 +41,16 @@ export async function getStaticProps(context) {
     props: {
       eventDetails: event,
     },
+    revalidate: 30,
   };
 }
 
 export async function getStaticPaths() {
-  const ids = await getAllEventIds();
+  const ids = await getFeaturedEventIds();
 
   const paths = ids.map((id) => ({ params: { eventId: id } }));
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 }

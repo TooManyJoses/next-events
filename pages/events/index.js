@@ -3,10 +3,8 @@ import EventList from '../../components/events/event-list';
 import EventsSearch from '../../components/events/events-search';
 import { getAllEvents } from '../../utils/getEvents';
 
-function AllEventsPage() {
-  const allEvents = getAllEvents();
+function AllEventsPage({ allEvents }) {
   const router = useRouter();
-
   function findEventshandler(year, month) {
     router.push(`/events/${year}/${month}`);
   }
@@ -20,3 +18,14 @@ function AllEventsPage() {
 }
 
 export default AllEventsPage;
+
+export async function getStaticProps() {
+  const allEvents = await getAllEvents();
+
+  return {
+    props: {
+      allEvents,
+    },
+    revalidate: 1800,
+  };
+}

@@ -5,23 +5,8 @@ import { getFilteredEvents } from '../../utils/getEvents';
 import Button from '../../components/ui/button';
 import ErrorAlert from '../../components/ui/error-alert';
 
-function FilteredEventsDetailPage() {
-  const router = useRouter();
-  const filteredData = router.query.slug;
-
-  if (!filteredData) {
-    return <p className="center">Loading...</p>;
-  }
-
-  const filteredYear = Number(filteredData[0]);
-  const filteredMonth = Number(filteredData[1]);
-
-  if (
-    isNaN(filteredYear) ||
-    isNaN(filteredMonth) ||
-    filteredMonth < 1 ||
-    filteredMonth > 12
-  ) {
+function FilteredEventsDetailPage({ filteredEvents, filteredDate, hasError }) {
+  if (hasError) {
     return (
       <>
         <ErrorAlert>
@@ -34,12 +19,7 @@ function FilteredEventsDetailPage() {
     );
   }
 
-  const filteredEvents = getFilteredEvents({
-    year: filteredYear,
-    month: filteredMonth,
-  });
-
-  const date = new Date(filteredYear, filteredMonth - 1);
+  const date = new Date(filteredDate.year, filteredDate.month - 1);
   return (
     <div>
       {!filteredEvents || filteredEvents.length === 0 ? (
@@ -62,3 +42,33 @@ function FilteredEventsDetailPage() {
 }
 
 export default FilteredEventsDetailPage;
+
+export async function getServerSideProps({ params }) {
+  const filteredData = params.slug;
+
+  const filteredYear = Number(filteredData[0]);
+  const filteredMonth = Number(filteredData[1]);
+
+  if (
+    isNaN(filteredYear) ||
+    isNaN(filteredMonth) ||
+    filteredMonth < 1 ||
+    filteredMonth > 12
+  ) {
+    return {
+      props: { hasError: true },
+    };
+  }
+
+  const filteredEvents = await getFilteredEvents({
+    year: filteredYear,
+    month: filteredMonth,
+  });
+
+  return {
+    props: {
+      filteredEvents,
+      filteredDate: { year: filteredYear, month: filteredMonth },
+    },
+  };
+}

@@ -38,8 +38,8 @@ export async function getEventById(id) {
   return allEvents.find((event) => event.id === id);
 }
 
-export async function getAllEventIds() {
-  const events = await getAllEvents();
+export async function getFeaturedEventIds() {
+  const events = await getFeaturedEvents();
 
   return events.map((event) => event.id)
 }
